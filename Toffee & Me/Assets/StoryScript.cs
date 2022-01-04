@@ -15,8 +15,11 @@ public class StoryScript : MonoBehaviour
     public Canvas mainStory;
     public GameObject textBoxContainer;
     public GameObject textBox;
+    public GameObject bunnysprite;
+    public Canvas choiceContainer;
     public float StoryFontSize;
     public TextMeshProUGUI textPrefab;
+    public Button buttonPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -79,8 +82,48 @@ public class StoryScript : MonoBehaviour
         storyText.text = text;
         storyText.transform.SetParent(mainStory.transform, false);
 
+        //Instantiates the text box
         GameObject mainTextBox = Instantiate(textBox);
         mainTextBox.transform.SetParent(textBoxContainer.transform, false);
+
+        List<string> tags = story.currentTags;
+
+        foreach (string choicetags in story.currentTags)
+        {
+            if (choicetags == "bunny")
+            {
+                Debug.Log("bunny was instantiated");
+                //GameObject bunny = Instantiate(bunnysprite);
+            }
+        }
+
+        foreach (Choice choice in story.currentChoices)
+        {
+            if (choice.index == 1)
+            {
+                Debug.Log("choice 1");
+                GameObject bunny = Instantiate(bunnysprite);
+                Button choiceButton = Instantiate(buttonPrefab) as Button;
+                TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
+                choiceText.text = choice.text;
+                choiceButton.transform.SetParent(choiceContainer.transform, false);
+                choiceButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(10f, 2f);
+                choiceButton.onClick.AddListener(delegate
+                {
+                    chooseStoryChoice(choice);
+                    Debug.Log("The index is " + choice.index + " and its text is '" + choice.text + "'");
+                });
+            }
+            //Button choiceButton = Instantiate(buttonPrefab) as Button;
+            //TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
+            //choiceText.text = choice.text;
+            //choiceButton.transform.SetParent(choiceContainer.transform, false);
+            //choiceButton.onClick.AddListener(delegate
+            //{
+            //    chooseStoryChoice(choice);
+            //    Debug.Log("The index is " + choice.index + " and its text is '" + choice.text + "'");
+            //});
+        }
     }
 
     string loadStoryChunk()
@@ -93,5 +136,11 @@ public class StoryScript : MonoBehaviour
         }
 
         return text;
+    }
+
+    void chooseStoryChoice(Choice choice)
+    {
+        story.ChooseChoiceIndex(choice.index);
+        refreshUI();
     }
 }
