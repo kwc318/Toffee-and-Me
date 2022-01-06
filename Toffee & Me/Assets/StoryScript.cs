@@ -13,13 +13,16 @@ public class StoryScript : MonoBehaviour
     public TextAsset inkJSON;
     private Story story;
     public Canvas mainStory;
-    public GameObject textBoxContainer;
+    public Canvas textBoxContainer;
     public GameObject textBox;
-    public GameObject bunnysprite;
     public Canvas choiceContainer;
+    public Canvas spriteContainer;
     public float StoryFontSize;
     public TextMeshProUGUI textPrefab;
-    public Button buttonPrefab;
+    public Button Toffee;
+    public float ToffeeXPos;
+    public float ToffeeYPos;
+    public bool buttonsActivated;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +46,20 @@ public class StoryScript : MonoBehaviour
             Restart();
             Debug.Log("escape was pressed");
         }
+
+        for (int i = 0; i < choiceContainer.transform.childCount; i++)
+        {
+            if (buttonsActivated == true)
+            {
+                choiceContainer.transform.GetChild(i).gameObject.GetComponent<Button>().enabled = true;
+
+            }
+
+            else
+            {
+                choiceContainer.transform.GetChild(i).gameObject.GetComponent<Button>().enabled = false;
+            }
+        }
     }
 
     public void Restart()
@@ -63,6 +80,11 @@ public class StoryScript : MonoBehaviour
         {
             Destroy(textBoxContainer.transform.GetChild(i).gameObject);
         }
+
+        //for (int i = 0; i < choiceContainer.transform.childCount; i++)
+        //{
+        //    Destroy(choiceContainer.transform.GetChild(i).gameObject);
+        //}
     }  
 
     void refreshUI()
@@ -97,32 +119,44 @@ public class StoryScript : MonoBehaviour
             }
         }
 
+        foreach (string choicetags in story.currentTags)
+        {
+            if (choicetags == "Toffee")
+            {
+                Debug.Log("bunny was instantiated");
+                createToffeeSprite();
+            }
+        }
+
         foreach (Choice choice in story.currentChoices)
         {
-            if (choice.index == 1)
+            eraseUI();
+            eraseSprites();
+            activateButtons();
+
+            if (choice.text == "Toffee")
             {
                 Debug.Log("choice 1");
-                GameObject bunny = Instantiate(bunnysprite);
-                Button choiceButton = Instantiate(buttonPrefab) as Button;
+                createToffeeButton();
+            }
+
+            void createToffeeButton()
+            {
+                Button choiceButton = Instantiate(Toffee) as Button;
                 TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
-                choiceText.text = choice.text;
                 choiceButton.transform.SetParent(choiceContainer.transform, false);
-                choiceButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(10f, 2f);
+                choiceButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(ToffeeXPos, ToffeeYPos);
                 choiceButton.onClick.AddListener(delegate
                 {
                     chooseStoryChoice(choice);
                     Debug.Log("The index is " + choice.index + " and its text is '" + choice.text + "'");
+                    for (int i = 0; i < choiceContainer.transform.childCount; i++)
+                    {
+                        choiceContainer.transform.GetChild(i).gameObject.GetComponent<Button>().enabled = false;
+                        deactivateButtons();
+                    }
                 });
             }
-            //Button choiceButton = Instantiate(buttonPrefab) as Button;
-            //TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
-            //choiceText.text = choice.text;
-            //choiceButton.transform.SetParent(choiceContainer.transform, false);
-            //choiceButton.onClick.AddListener(delegate
-            //{
-            //    chooseStoryChoice(choice);
-            //    Debug.Log("The index is " + choice.index + " and its text is '" + choice.text + "'");
-            //});
         }
     }
 
@@ -142,5 +176,31 @@ public class StoryScript : MonoBehaviour
     {
         story.ChooseChoiceIndex(choice.index);
         refreshUI();
+    }
+
+    void createToffeeSprite()
+    {
+        Button choiceButton = Instantiate(Toffee) as Button;
+        TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
+        choiceButton.transform.SetParent(spriteContainer.transform, false);
+        choiceButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(ToffeeXPos, ToffeeYPos);
+    }
+
+    void activateButtons()
+    {
+        buttonsActivated = true;
+    }
+
+    void deactivateButtons()
+    {
+        buttonsActivated = false;
+    }
+
+    void eraseSprites()
+    {
+        for (int i = 0; i < spriteContainer.transform.childCount; i++)
+        {
+            Destroy(spriteContainer.transform.GetChild(i).gameObject);
+        }
     }
 }
