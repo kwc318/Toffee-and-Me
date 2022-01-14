@@ -20,6 +20,8 @@ public class StoryScript : MonoBehaviour
     public float StoryFontSize;
     public TextMeshProUGUI textPrefab;
     public Button Toffee;
+    public Button TV;
+    public Button Pillow;
     public float ToffeeXPos;
     public float ToffeeYPos;
     public bool buttonsActivated;
@@ -110,21 +112,24 @@ public class StoryScript : MonoBehaviour
 
         List<string> tags = story.currentTags;
 
-        foreach (string choicetags in story.currentTags)
+        foreach (string storytags in story.currentTags)
         {
-            if (choicetags == "bunny")
+            if (storytags == "bunny")
             {
                 Debug.Log("bunny was instantiated");
                 //GameObject bunny = Instantiate(bunnysprite);
             }
-        }
 
-        foreach (string choicetags in story.currentTags)
-        {
-            if (choicetags == "Toffee")
+            if (storytags == "Toffee")
             {
                 Debug.Log("bunny was instantiated");
                 createToffeeSprite();
+            }
+
+            if (storytags == "dayhouse")
+            {
+                Debug.Log("dayhouse was instantiated");
+                //createToffeeSprite();
             }
         }
 
@@ -140,12 +145,58 @@ public class StoryScript : MonoBehaviour
                 createToffeeButton();
             }
 
+            if (choice.text == "TV")
+            {
+                Debug.Log("choice 2");
+                createTVButton();
+            }
+
+            if (choice.text == "Pillow")
+            {
+                Debug.Log("choice 3");
+                createPillowButton();
+            }
+
             void createToffeeButton()
             {
                 Button choiceButton = Instantiate(Toffee) as Button;
                 TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
                 choiceButton.transform.SetParent(choiceContainer.transform, false);
                 choiceButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(ToffeeXPos, ToffeeYPos);
+                choiceButton.onClick.AddListener(delegate
+                {
+                    chooseStoryChoice(choice);
+                    Debug.Log("The index is " + choice.index + " and its text is '" + choice.text + "'");
+                    for (int i = 0; i < choiceContainer.transform.childCount; i++)
+                    {
+                        choiceContainer.transform.GetChild(i).gameObject.GetComponent<Button>().enabled = false;
+                        deactivateButtons();
+                    }
+                });
+            }
+
+            void createTVButton()
+            {
+                Button choiceButton = Instantiate(TV) as Button;
+                TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
+                choiceButton.transform.SetParent(choiceContainer.transform, false);
+                choiceButton.onClick.AddListener(delegate
+                {
+                    chooseStoryChoice(choice);
+                    Debug.Log("The index is " + choice.index + " and its text is '" + choice.text + "'");
+                    for (int i = 0; i < choiceContainer.transform.childCount; i++)
+                    {
+                        choiceContainer.transform.GetChild(i).gameObject.GetComponent<Button>().enabled = false;
+                        deactivateButtons();
+                    }
+                });
+            }
+
+            void createPillowButton()
+            {
+                Button choiceButton = Instantiate(Pillow) as Button;
+                TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
+                choiceButton.transform.SetParent(choiceContainer.transform, false);
                 choiceButton.onClick.AddListener(delegate
                 {
                     chooseStoryChoice(choice);
@@ -178,12 +229,25 @@ public class StoryScript : MonoBehaviour
         refreshUI();
     }
 
+    void createDayHousesprite()
+    {
+
+    }
+    void createTVSprite()
+    {
+        Button choiceButton = Instantiate(TV) as Button;
+        TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
+        choiceButton.transform.SetParent(spriteContainer.transform, false);
+        choiceButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(ToffeeXPos, ToffeeYPos);
+    }
+
     void createToffeeSprite()
     {
         Button choiceButton = Instantiate(Toffee) as Button;
         TextMeshProUGUI choiceText = choiceButton.GetComponentInChildren<TextMeshProUGUI>();
         choiceButton.transform.SetParent(spriteContainer.transform, false);
         choiceButton.GetComponent<RectTransform>().anchoredPosition = new Vector2(ToffeeXPos, ToffeeYPos);
+        choiceButton.GetComponent<Button>().enabled = false;
     }
 
     void activateButtons()
