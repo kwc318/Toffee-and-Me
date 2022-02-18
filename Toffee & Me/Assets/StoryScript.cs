@@ -136,7 +136,7 @@ public class StoryScript : MonoBehaviour
         foreach (Choice choice in story.currentChoices)
         {
             eraseUI();
-            eraseSprites();
+            //eraseSprites();
             activateButtons();
 
             if (choice.text == "Toffee")
@@ -227,6 +227,7 @@ public class StoryScript : MonoBehaviour
     {
         story.ChooseChoiceIndex(choice.index);
         refreshUI();
+        eraseButtons();
     }
 
     void createDayHousesprite()
@@ -265,6 +266,14 @@ public class StoryScript : MonoBehaviour
         for (int i = 0; i < spriteContainer.transform.childCount; i++)
         {
             Destroy(spriteContainer.transform.GetChild(i).gameObject);
+        }
+    }
+
+    void eraseButtons()
+    {
+        for (int i = 0; i < choiceContainer.transform.childCount; i++)
+        {
+            Destroy(choiceContainer.transform.GetChild(i).gameObject);
         }
     }
 }
